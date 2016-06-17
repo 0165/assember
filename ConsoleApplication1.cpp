@@ -19,6 +19,8 @@ bool isLab(string target,int *temp);
 int howLong(string target);
 int toNum(string target);
 string cut(string target);
+void mySort();
+void show();
 
 op MyOpCode[59];
 op * lab;
@@ -97,7 +99,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	sourse.clear();				//reset the end-of-file, otherwise can't goback to begin
 	sourse.seekg(0, ios::beg);
-
+	mySort();
+	
 	//second run of sourse
 	end = location - start;
 	tempCode.open("tempCode.txt");
@@ -221,11 +224,18 @@ bool isOp(string target, int *temp){
 }
 
 bool isLab(string target, int *temp){
-	for (unsigned int i = 0; i < mylong; i++)
-		if (lab[i].s == target){
-			*temp = lab[i].num;
+	int low = 0, high = mylong-1, mid;
+	while (low <= high){
+		mid = (low + high) / 2;
+		if (target == lab[mid].s){
+			*temp = lab[mid].num;
 			return true;
 		}
+		else if (lab[mid].s > target)
+			high = mid - 1;
+		else if (lab[mid].s < target)
+			low = mid + 1;
+	}
 	return false;
 }
 
@@ -247,4 +257,18 @@ string cut(string target){
 	for (int i = 2; target[i] != '\''; i++)
 		temp = temp + target[i];
 	return temp;
+}
+
+void mySort(){
+	op temp;
+	for (int i = 0; i < mylong-1; i++)
+		for (int j = i+1 ; j < mylong; j++)
+			if (lab[i].s > lab[j].s){
+				temp.s = lab[i].s;
+				temp.num = lab[i].num;
+				lab[i].s = lab[j].s;
+				lab[i].num= lab[j].num;
+				lab[j].s = temp.s;
+				lab[j].num = temp.num;
+			}
 }
